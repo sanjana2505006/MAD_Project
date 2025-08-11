@@ -1,6 +1,6 @@
 # CodeFocus
 
-1. Unified Coding Practice & Resource Platform for Recursion and Other Topics
+1. All-in-One Coding Practice & Resource Platform.
 
 2. Sanjana – 2024-B-24022006A
 
