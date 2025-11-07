@@ -66,11 +66,15 @@ npx react-native run-ios
 ```
 
 Documentation & Resources
-	•	React Native Documentation: https://reactnative.dev/docs/getting-started￼
-	•	React Navigation: https://reactnavigation.org/docs/getting-started￼
-	•	Firebase Realtime Database: https://firebase.google.com/docs/database￼
-	•	OpenAI GPT API: https://platform.openai.com/docs￼
-	•	Tailwind CSS for React Native: https://tailwindcss.com/docs/guides/react-native￼
+•	React Native Documentation: https://reactnative.dev/docs/getting-started￼
+	
+•	React Navigation: https://reactnavigation.org/docs/getting-started￼
+	
+•	Firebase Realtime Database: https://firebase.google.com/docs/database￼
+	
+•	OpenAI GPT API: https://platform.openai.com/docs￼
+	
+•	Tailwind CSS for React Native: https://tailwindcss.com/docs/guides/react-native￼
 
 Contributing
 
