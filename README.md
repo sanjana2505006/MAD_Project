@@ -95,4 +95,4 @@ This project is licensed under the MIT License. See the LICENSE￼ file for deta
 Contact
 	•	GitHub: https://github.com/sanjana2505006￼
 
-	![Thank you](https://media.giphy.com/media/du3J3cXyzhj75IOgvA/giphy.gif)
+![Thank you](https://media.giphy.com/media/du3J3cXyzhj75IOgvA/giphy.gif)
