@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform } from 'react-native';
 import { Play, LogOut, Clock } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import Header from '../components/Header';
 import ProjectCard from '../components/ProjectCard';
+import ProblemCard from '../components/ProblemCard';
 import { useFocusEffect } from '@react-navigation/native';
 
 const Dashboard = ({ navigation }) => {
     const [loginHistory, setLoginHistory] = useState([]);
+    const [recommendedProblems, setRecommendedProblems] = useState([]);
 
     const recentProjects = [
         { id: 1, title: 'Python Basics', language: 'Python' },
@@ -21,6 +24,40 @@ const Dashboard = ({ navigation }) => {
             loadLoginHistory();
         }, [])
     );
+
+    useEffect(() => {
+        fetchRecommendedProblems();
+    }, []);
+
+    const fetchRecommendedProblems = async () => {
+        try {
+            const query = `
+        query {
+          allQuestions {
+            title
+            titleSlug
+            difficulty
+            topicTags {
+              name
+            }
+          }
+        }
+      `;
+            const response = await axios.post('https://leetcode.com/graphql', { query });
+            const questions = response.data.data.allQuestions.slice(0, 3); // Limit to 3 for dashboard
+            const formattedProblems = questions.map((q, index) => ({
+                id: index.toString(),
+                title: q.title,
+                category: q.topicTags.length > 0 ? q.topicTags[0].name : 'General',
+                difficulty: q.difficulty,
+                status: 'Unsolved',
+                date: 'Recommended'
+            }));
+            setRecommendedProblems(formattedProblems);
+        } catch (err) {
+            console.error('Failed to fetch recommended problems', err);
+        }
+    };
 
     const loadLoginHistory = async () => {
         try {
@@ -90,7 +127,7 @@ const Dashboard = ({ navigation }) => {
             <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
 
                 {/* Start Coding Button */}
-                <TouchableOpacity style={styles.startBtn}>
+                <TouchableOpacity style={styles.startBtn} onPress={() => navigation.navigate('Problems')}>
                     <View style={styles.startBtnIcon}>
                         <Play fill="#fff" color="#fff" size={24} />
                     </View>
@@ -99,6 +136,18 @@ const Dashboard = ({ navigation }) => {
                         <Text style={styles.startBtnSubtext}>Practice new problems</Text>
                     </View>
                 </TouchableOpacity>
+
+                {/* Recommended Problems Section */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Recommended for You</Text>
+                    {recommendedProblems.map((problem) => (
+                        <ProblemCard
+                            key={problem.id}
+                            {...problem}
+                            onPress={() => navigation.navigate('ProblemDetail', { problem })}
+                        />
+                    ))}
+                </View>
 
                 {/* Recent Projects Section */}
                 <View style={styles.section}>
