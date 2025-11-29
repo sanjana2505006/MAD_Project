@@ -4,45 +4,51 @@
 
 ---
 
-## Overview
+# App Overview
 
-**MAD Project** is a modern mobile coding platform built with **React Native** and **Expo** that provides a focused environment for developers to practice coding problems. The app integrates with LeetCode to fetch recommended problems, tracks user progress with real-time statistics, and offers a seamless mobile experience with a premium dark-mode UI.
-
----
-
-## Features
-
-- **Interactive Dashboard**: View real-time stats including solved problems, current streak, and time spent.
-- **Recommended Problems**: Get personalized problem recommendations fetched directly from LeetCode.
-- **Problem Explorer**: Browse and search a list of coding problems with difficulty filters (Easy, Medium, Hard).
-- **Profile Management**: customizable user profile with ability to edit name, email, and phone number.
-- **Login History**: Track login sessions and device usage for security.
-- **Dark Mode UI**: A sleek, distraction-free dark theme designed for long coding sessions.
-- **Secure Storage**: User data and session history are securely stored locally using AsyncStorage.
+A simple, modern mobile coding platform built with **React Native** and **Expo**. It helps developers practice coding problems, track their progress, and manage projects — all in a distraction-free environment.
 
 ---
 
-## Tech Stack
+# Key Features
 
-- **Framework**: React Native (Expo)
-- **Navigation**: React Navigation (Stack & Bottom Tabs)
-- **State Management**: React Hooks (useState, useEffect)
-- **Data Fetching**: Axios (GraphQL integration with LeetCode)
-- **Local Storage**: @react-native-async-storage/async-storage
-- **UI Components**: 
-  - `expo-linear-gradient` for premium visuals
-  - `lucide-react-native` & `expo-vector-icons` for iconography
-  - Custom reusable components (Cards, Headers, Inputs)
+## 🏠 Interactive Dashboard
+- Live stats like **Solved Problems**, **Streak**, and **Time Spent**
+- Quick **Start Coding** button
+- **Recommended Problems** fetched from LeetCode
+- **Recent Projects** with a *View All* option
+- **Login History** to track your session activity
 
 ---
+
+## 📚 Problem List
+- Browse **100+ coding problems** from LeetCode
+- **Search** problems by title
+- **Filter** by difficulty: Easy, Medium, Hard
+- Smooth and optimized scrolling
+
+---
+
+## 🗂️ Project List *(New!)*
+- View all your personal projects
+- **Search** projects by name
+- **Filter** by programming language (React Native, Node.js, etc.)
+
+---
+
+## 👤 Profile Management
+- View and update your details (Name, Email, Phone)
+- Data stored securely on your device
+
+---
+
+## ✨ Premium UI/UX
+- **Dark Mode** for a sleek, modern look
+- **Floating Tab Bar** with glass-morphism design
+- **Haptic Feedback** for improved interaction
+- **Skeleton Loaders** for smooth loading states
 
 ## Getting Started
-
-### Prerequisites
-
-- Node.js >= 18
-- npm / yarn
-- Expo Go app on your mobile device (iOS/Android) OR Android Studio / Xcode for emulators.
 
 ### Installation
 
