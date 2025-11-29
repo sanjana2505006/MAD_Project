@@ -33,25 +33,6 @@ const EditProfile = ({ route, navigation }) => {
         }
     };
 
-    const InputField = ({ icon: Icon, label, value, onChangeText, keyboardType = 'default' }) => (
-        <View style={styles.inputContainer}>
-            <Text style={styles.label}>{label}</Text>
-            <View style={styles.inputWrapper}>
-                <View style={styles.iconContainer}>
-                    <Icon size={20} color="#6366f1" />
-                </View>
-                <TextInput
-                    style={styles.input}
-                    value={value}
-                    onChangeText={onChangeText}
-                    placeholderTextColor="#64748b"
-                    keyboardType={keyboardType}
-                    autoCapitalize="none"
-                />
-            </View>
-        </View>
-    );
-
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -103,6 +84,25 @@ const EditProfile = ({ route, navigation }) => {
         </SafeAreaView>
     );
 };
+
+const InputField = ({ icon: Icon, label, value, onChangeText, keyboardType = 'default' }) => (
+    <View style={styles.inputContainer}>
+        <Text style={styles.label}>{label}</Text>
+        <View style={styles.inputWrapper}>
+            <View style={styles.iconContainer}>
+                <Icon size={20} color="#6366f1" />
+            </View>
+            <TextInput
+                style={styles.input}
+                value={value}
+                onChangeText={onChangeText}
+                placeholderTextColor="#64748b"
+                keyboardType={keyboardType}
+                autoCapitalize="none"
+            />
+        </View>
+    </View>
+);
 
 const styles = StyleSheet.create({
     container: {
