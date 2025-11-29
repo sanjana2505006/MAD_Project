@@ -219,6 +219,7 @@ const Dashboard = ({ navigation }) => {
                             key={project.id}
                             title={project.title}
                             language={project.language}
+                            onPress={() => navigation.navigate('ProjectDetail', { project })}
                         />
                     ))}
                 </View>

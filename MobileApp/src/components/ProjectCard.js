@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Code, ChevronRight } from 'lucide-react-native';
 
-const ProjectCard = ({ title, language, progress }) => {
+const ProjectCard = ({ title, language, progress, onPress }) => {
     return (
-        <TouchableOpacity style={styles.card} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.card} activeOpacity={0.7} onPress={onPress}>
             <View style={styles.iconContainer}>
                 <Code color="#4dabf7" size={24} />
             </View>
