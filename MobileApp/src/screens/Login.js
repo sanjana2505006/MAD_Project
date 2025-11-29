@@ -154,48 +154,6 @@ export default function Login({ navigation }) {
         setLoading(false);
     };
 
-    const InputField = ({ icon, placeholder, value, onChangeText, keyboardType = "default", maxLength, type }) => (
-        <TouchableOpacity
-            style={[
-                styles.inputWrapper,
-                focusedInput === type && styles.inputWrapperFocused
-            ]}
-            activeOpacity={1}
-        >
-            <View style={styles.inputIconContainer}>
-                <Ionicons
-                    name={icon}
-                    size={22}
-                    color={focusedInput === type ? "#6366f1" : "#94a3b8"}
-                />
-            </View>
-            <TextInput
-                style={styles.input}
-                placeholder={placeholder}
-                placeholderTextColor="#94a3b8"
-                value={value}
-                onChangeText={onChangeText}
-                keyboardType={keyboardType}
-                maxLength={maxLength}
-                onFocus={() => setFocusedInput(type)}
-                onBlur={() => setFocusedInput(null)}
-                autoCapitalize={type === 'email' ? 'none' : 'words'}
-            />
-            {value.length > 0 && (
-                <TouchableOpacity
-                    style={styles.clearButton}
-                    onPress={() => {
-                        if (type === 'name') setName("");
-                        if (type === 'email') setEmail("");
-                        if (type === 'phone') setPhone("");
-                    }}
-                >
-                    <Ionicons name="close-circle" size={18} color="#94a3b8" />
-                </TouchableOpacity>
-            )}
-        </TouchableOpacity>
-    );
-
     return (
         <KeyboardAvoidingView
             style={styles.container}
@@ -271,6 +229,8 @@ export default function Login({ navigation }) {
                             value={name}
                             onChangeText={setName}
                             type="name"
+                            focusedInput={focusedInput}
+                            setFocusedInput={setFocusedInput}
                         />
 
                         <InputField
@@ -280,6 +240,8 @@ export default function Login({ navigation }) {
                             onChangeText={setEmail}
                             keyboardType="email-address"
                             type="email"
+                            focusedInput={focusedInput}
+                            setFocusedInput={setFocusedInput}
                         />
 
                         <InputField
@@ -290,6 +252,8 @@ export default function Login({ navigation }) {
                             keyboardType="phone-pad"
                             maxLength={10}
                             type="phone"
+                            focusedInput={focusedInput}
+                            setFocusedInput={setFocusedInput}
                         />
 
                         <View style={styles.validationInfo}>
@@ -376,6 +340,50 @@ export default function Login({ navigation }) {
         </KeyboardAvoidingView>
     );
 }
+
+const InputField = ({ icon, placeholder, value, onChangeText, keyboardType = "default", maxLength, type, focusedInput, setFocusedInput, setName, setEmail, setPhone }) => (
+    <TouchableOpacity
+        style={[
+            styles.inputWrapper,
+            focusedInput === type && styles.inputWrapperFocused
+        ]}
+        activeOpacity={1}
+    >
+        <View style={styles.inputIconContainer}>
+            <Ionicons
+                name={icon}
+                size={22}
+                color={focusedInput === type ? "#6366f1" : "#94a3b8"}
+            />
+        </View>
+        <TextInput
+            style={styles.input}
+            placeholder={placeholder}
+            placeholderTextColor="#94a3b8"
+            value={value}
+            onChangeText={onChangeText}
+            keyboardType={keyboardType}
+            maxLength={maxLength}
+            onFocus={() => setFocusedInput(type)}
+            onBlur={() => setFocusedInput(null)}
+            autoCapitalize={type === 'email' ? 'none' : 'words'}
+        />
+        {value.length > 0 && (
+            <TouchableOpacity
+                style={styles.clearButton}
+                onPress={() => {
+                    // Note: This logic needs to be handled via props or context if moved outside
+                    // For simplicity, we'll pass the setters or handle it differently.
+                    // Actually, since we moved it out, we need to pass the clear handler or setters.
+                    // Let's modify the prop to accept onClear or just pass onChangeText('')
+                    onChangeText("");
+                }}
+            >
+                <Ionicons name="close-circle" size={18} color="#94a3b8" />
+            </TouchableOpacity>
+        )}
+    </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
     container: {
