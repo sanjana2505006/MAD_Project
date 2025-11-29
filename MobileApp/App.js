@@ -8,6 +8,7 @@ import ProblemList from './src/screens/ProblemList';
 import ProblemDetail from './src/screens/ProblemDetail';
 
 import TabNavigator from './src/navigation/TabNavigator';
+import Profile from './src/screens/Profile';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +26,7 @@ export default function App() {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="MainTabs" component={TabNavigator} />
         <Stack.Screen name="ProblemDetail" component={ProblemDetail} options={{ headerShown: true, title: 'Problem Detail' }} />
+        <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
     </NavigationContainer>
   );

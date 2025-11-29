@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { User, LogOut } from 'lucide-react-native';
 
-const Header = ({ onLogout }) => {
+const Header = ({ onLogout, onProfilePress }) => {
     return (
         <View style={styles.container}>
             <View>
@@ -10,9 +10,11 @@ const Header = ({ onLogout }) => {
                 <Text style={styles.subtext}>Ready to code today?</Text>
             </View>
             <View style={styles.rightContainer}>
-                <View style={styles.profileContainer}>
-                    <User color="#fff" size={24} />
-                </View>
+                <TouchableOpacity onPress={onProfilePress}>
+                    <View style={styles.profileContainer}>
+                        <User color="#fff" size={24} />
+                    </View>
+                </TouchableOpacity>
                 {onLogout && (
                     <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
                         <LogOut color="#ef4444" size={24} />

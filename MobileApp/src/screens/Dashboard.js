@@ -82,7 +82,10 @@ const Dashboard = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Header onLogout={handleLogout} />
+            <Header
+                onLogout={handleLogout}
+                onProfilePress={() => navigation.navigate('Profile')}
+            />
 
             <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
 
