@@ -139,6 +139,7 @@ const Dashboard = ({ navigation }) => {
             <Header
                 onLogout={handleLogout}
                 onProfilePress={() => navigation.navigate('Profile')}
+                onNotificationsPress={() => navigation.navigate('Notifications')}
             />
 
             <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>

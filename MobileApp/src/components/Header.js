@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { User, LogOut, Bell } from 'lucide-react-native';
 
-const Header = ({ onLogout, onProfilePress }) => {
+const Header = ({ onLogout, onProfilePress, onNotificationsPress }) => {
     return (
         <View style={styles.container}>
             <View>
@@ -10,7 +10,7 @@ const Header = ({ onLogout, onProfilePress }) => {
                 <Text style={styles.subtext}>Let's solve some problems today</Text>
             </View>
             <View style={styles.rightContainer}>
-                <TouchableOpacity style={styles.iconButton}>
+                <TouchableOpacity style={styles.iconButton} onPress={onNotificationsPress}>
                     <Bell color="#fff" size={24} />
                     <View style={styles.badge} />
                 </TouchableOpacity>

@@ -7,6 +7,7 @@ import Login from './src/screens/Login';
 import ProblemList from './src/screens/ProblemList';
 import ProblemDetail from './src/screens/ProblemDetail';
 import ProjectDetail from './src/screens/ProjectDetail';
+import Notifications from './src/screens/Notifications';
 
 import TabNavigator from './src/navigation/TabNavigator';
 import Profile from './src/screens/Profile';
@@ -28,6 +29,7 @@ export default function App() {
         <Stack.Screen name="MainTabs" component={TabNavigator} />
         <Stack.Screen name="ProblemDetail" component={ProblemDetail} options={{ headerShown: true, title: 'Problem Detail' }} />
         <Stack.Screen name="ProjectDetail" component={ProjectDetail} />
+        <Stack.Screen name="Notifications" component={Notifications} />
         <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
     </NavigationContainer>
