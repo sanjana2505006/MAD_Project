@@ -228,12 +228,16 @@ export default function Login({ navigation }) {
                     {/* Header Section */}
                     <View style={styles.header}>
                         <View style={styles.animationContainer}>
-                            <LottieView
-                                source={require('../../assets/animations/coding.json')} // Add your animation file
+                            {/* Placeholder for Lottie Animation - Replace with actual file if available */}
+                            {/* <LottieView
+                                source={require('../../assets/animations/coding.json')}
                                 autoPlay
                                 loop
                                 style={styles.lottieAnimation}
-                            />
+                            /> */}
+                            <View style={styles.logoPlaceholder}>
+                                <Ionicons name="code-slash" size={60} color="#6366f1" />
+                            </View>
                         </View>
 
                         <Text style={styles.title}>Start Your Coding Journey</Text>
@@ -436,6 +440,16 @@ const styles = StyleSheet.create({
     lottieAnimation: {
         width: '100%',
         height: '100%',
+    },
+    logoPlaceholder: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: 'rgba(99, 102, 241, 0.3)',
     },
     title: {
         fontSize: 32,

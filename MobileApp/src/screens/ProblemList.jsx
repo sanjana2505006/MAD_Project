@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
+import { Filter, Search, ChevronLeft } from 'lucide-react-native';
 import ProblemCard from '../components/ProblemCard';
 
 export default function ProblemList({ navigation }) {
@@ -58,59 +59,151 @@ export default function ProblemList({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Problems</Text>
-            <Text style={styles.subHeader}>Practice coding problems by category and difficulty</Text>
-
-            <View style={styles.filters}>
-                <Picker
-                    selectedValue={difficultyFilter}
-                    style={styles.picker}
-                    onValueChange={(itemValue) => setDifficultyFilter(itemValue)}
-                >
-                    <Picker.Item label="All Levels" value="all" />
-                    <Picker.Item label="Easy" value="easy" />
-                    <Picker.Item label="Medium" value="medium" />
-                    <Picker.Item label="Hard" value="hard" />
-                </Picker>
-
-                <Picker
-                    selectedValue={statusFilter}
-                    style={styles.picker}
-                    onValueChange={(itemValue) => setStatusFilter(itemValue)}
-                >
-                    <Picker.Item label="All Status" value="all" />
-                    <Picker.Item label="Solved" value="solved" />
-                    <Picker.Item label="Attempting" value="attempting" />
-                    <Picker.Item label="Unsolved" value="unsolved" />
-                </Picker>
+            <View style={styles.headerContainer}>
+                <View style={styles.headerTop}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Dashboard')} style={styles.backButton}>
+                        <ChevronLeft color="#fff" size={24} />
+                    </TouchableOpacity>
+                    <Text style={styles.header}>Problems</Text>
+                </View>
+                <Text style={styles.subHeader}>Practice coding problems by category and difficulty</Text>
             </View>
 
-            <FlatList
-                data={filteredProblems}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <ProblemCard
-                        {...item}
-                        onPress={() => navigation.navigate('ProblemDetail', { problem: item })}
-                    />
-                )}
-                initialNumToRender={10}
-                maxToRenderPerBatch={10}
-                windowSize={5}
-                removeClippedSubviews={true}
-                ListEmptyComponent={<Text style={styles.noResults}>No problems found matching your filters.</Text>}
-            />
+            <View style={styles.filtersContainer}>
+                <View style={styles.pickerWrapper}>
+                    <Picker
+                        selectedValue={difficultyFilter}
+                        style={styles.picker}
+                        dropdownIconColor="#fff"
+                        onValueChange={(itemValue) => setDifficultyFilter(itemValue)}
+                    >
+                        <Picker.Item label="All Levels" value="all" color="#fff" />
+                        <Picker.Item label="Easy" value="easy" color="#fff" />
+                        <Picker.Item label="Medium" value="medium" color="#fff" />
+                        <Picker.Item label="Hard" value="hard" color="#fff" />
+                    </Picker>
+                </View>
+
+                <View style={styles.pickerWrapper}>
+                    <Picker
+                        selectedValue={statusFilter}
+                        style={styles.picker}
+                        dropdownIconColor="#fff"
+                        onValueChange={(itemValue) => setStatusFilter(itemValue)}
+                    >
+                        <Picker.Item label="All Status" value="all" color="#fff" />
+                        <Picker.Item label="Solved" value="solved" color="#fff" />
+                        <Picker.Item label="Attempting" value="attempting" color="#fff" />
+                        <Picker.Item label="Unsolved" value="unsolved" color="#fff" />
+                    </Picker>
+                </View>
+            </View>
+
+            {loading ? (
+                <View style={styles.center}>
+                    <ActivityIndicator size="large" color="#4dabf7" />
+                </View>
+            ) : (
+                <FlatList
+                    data={filteredProblems}
+                    keyExtractor={item => item.id}
+                    renderItem={({ item }) => (
+                        <ProblemCard
+                            {...item}
+                            onPress={() => navigation.navigate('ProblemDetail', { problem: item })}
+                        />
+                    )}
+                    initialNumToRender={10}
+                    maxToRenderPerBatch={10}
+                    windowSize={5}
+                    removeClippedSubviews={true}
+                    contentContainerStyle={styles.listContent}
+                    ListEmptyComponent={
+                        <View style={styles.emptyContainer}>
+                            <Filter color="#64748b" size={48} />
+                            <Text style={styles.noResults}>No problems found matching your filters.</Text>
+                        </View>
+                    }
+                />
+            )}
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { padding: 16, flex: 1, backgroundColor: '#f3f4f6' },
-    header: { fontSize: 24, fontWeight: 'bold', marginBottom: 4 },
-    subHeader: { fontSize: 14, color: 'gray', marginBottom: 12 },
-    filters: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-    picker: { height: 50, flex: 1 },
-    noResults: { textAlign: 'center', marginTop: 20, fontSize: 16, color: 'gray' },
-    center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    error: { color: 'red', fontSize: 16, textAlign: 'center' }
+    container: {
+        flex: 1,
+        backgroundColor: '#121212',
+    },
+    headerContainer: {
+        padding: 20,
+        paddingTop: 60,
+        backgroundColor: '#1e293b',
+        borderBottomWidth: 1,
+        borderBottomColor: '#334155',
+    },
+    headerTop: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    backButton: {
+        marginRight: 12,
+        padding: 4,
+        borderRadius: 8,
+        backgroundColor: 'rgba(255,255,255,0.1)',
+    },
+    header: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#fff',
+    },
+    subHeader: {
+        fontSize: 14,
+        color: '#94a3b8',
+    },
+    filtersContainer: {
+        flexDirection: 'row',
+        padding: 16,
+        gap: 12,
+    },
+    pickerWrapper: {
+        flex: 1,
+        backgroundColor: '#1e1e1e',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#333',
+        overflow: 'hidden',
+        height: 50,
+        justifyContent: 'center',
+    },
+    picker: {
+        color: '#fff',
+        marginLeft: -8, // Adjust for default picker padding
+    },
+    listContent: {
+        padding: 16,
+        paddingTop: 0,
+    },
+    center: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    emptyContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 60,
+    },
+    noResults: {
+        textAlign: 'center',
+        marginTop: 16,
+        fontSize: 16,
+        color: '#64748b',
+    },
+    error: {
+        color: '#ef4444',
+        fontSize: 16,
+        textAlign: 'center',
+    }
 });
