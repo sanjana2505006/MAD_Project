@@ -29,7 +29,7 @@ export default function ProblemList({ navigation }) {
         }
       `;
             const response = await axios.post('https://leetcode.com/graphql', { query });
-            const questions = response.data.data.allQuestions.slice(0, 20);
+            const questions = response.data.data.allQuestions.slice(0, 100);
             const formattedProblems = questions.map((q, index) => ({
                 id: index.toString(),
                 title: q.title,
@@ -105,6 +105,9 @@ export default function ProblemList({ navigation }) {
                             onPress={() => navigation.navigate('ProblemDetail', { problem: item })}
                         />
                     )}
+                    initialNumToRender={10}
+                    maxToRenderPerBatch={10}
+                    windowSize={5}
                     contentContainerStyle={styles.listContent}
                     showsVerticalScrollIndicator={false}
                 />
