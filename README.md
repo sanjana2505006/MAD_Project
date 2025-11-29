@@ -62,7 +62,7 @@ npm install
 3. Run the app:
 
 ```bash
-npx expo start
+npm start
 ```
 
 4. Scan the QR code with the **Expo Go** app on your phone, or press `a` for Android Emulator / `i` for iOS Simulator.
