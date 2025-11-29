@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, ActivityIndicator } from 'react-native';
 import { Play, LogOut, Clock } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -11,6 +11,7 @@ import { useFocusEffect } from '@react-navigation/native';
 const Dashboard = ({ navigation }) => {
     const [loginHistory, setLoginHistory] = useState([]);
     const [recommendedProblems, setRecommendedProblems] = useState([]);
+    const [loadingProblems, setLoadingProblems] = useState(true);
 
     const recentProjects = [
         { id: 1, title: 'Python Basics', language: 'Python' },
@@ -31,6 +32,13 @@ const Dashboard = ({ navigation }) => {
 
     const fetchRecommendedProblems = async () => {
         try {
+            // Try to load from cache first
+            const cachedProblems = await AsyncStorage.getItem('cachedRecommendedProblems');
+            if (cachedProblems) {
+                setRecommendedProblems(JSON.parse(cachedProblems));
+                setLoadingProblems(false);
+            }
+
             const query = `
         query {
           allQuestions {
@@ -53,9 +61,15 @@ const Dashboard = ({ navigation }) => {
                 status: 'Unsolved',
                 date: 'Recommended'
             }));
+
             setRecommendedProblems(formattedProblems);
+            setLoadingProblems(false);
+
+            // Update cache
+            await AsyncStorage.setItem('cachedRecommendedProblems', JSON.stringify(formattedProblems));
         } catch (err) {
             console.error('Failed to fetch recommended problems', err);
+            setLoadingProblems(false);
         }
     };
 
@@ -140,13 +154,17 @@ const Dashboard = ({ navigation }) => {
                 {/* Recommended Problems Section */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Recommended for You</Text>
-                    {recommendedProblems.map((problem) => (
-                        <ProblemCard
-                            key={problem.id}
-                            {...problem}
-                            onPress={() => navigation.navigate('ProblemDetail', { problem })}
-                        />
-                    ))}
+                    {loadingProblems && recommendedProblems.length === 0 ? (
+                        <ActivityIndicator size="large" color="#4dabf7" style={{ marginVertical: 20 }} />
+                    ) : (
+                        recommendedProblems.map((problem) => (
+                            <ProblemCard
+                                key={problem.id}
+                                {...problem}
+                                onPress={() => navigation.navigate('ProblemDetail', { problem })}
+                            />
+                        ))
+                    )}
                 </View>
 
                 {/* Recent Projects Section */}
