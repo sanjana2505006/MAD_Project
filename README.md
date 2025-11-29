@@ -1,5 +1,3 @@
-# MAD Project
-
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github&logoColor=white)](https://github.com/sanjana2505006/MAD_Project)
 
 ---
