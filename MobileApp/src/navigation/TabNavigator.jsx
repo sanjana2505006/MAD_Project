@@ -27,8 +27,8 @@ export default function TabNavigator() {
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
 
-                    if (route.name === 'Home') {
-                        iconName = focused ? 'home' : 'home-outline';
+                    if (route.name === 'Dashboard') {
+                        iconName = focused ? 'grid' : 'grid-outline';
                     } else if (route.name === 'Problems') {
                         iconName = focused ? 'list' : 'list-outline';
                     }
@@ -38,7 +38,7 @@ export default function TabNavigator() {
             })}
         >
             <Tab.Screen
-                name="Home"
+                name="Dashboard"
                 component={Dashboard}
                 options={{ title: 'Dashboard' }}
             />
