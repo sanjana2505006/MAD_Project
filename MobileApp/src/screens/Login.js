@@ -128,6 +128,18 @@ export default function Login({ navigation }) {
             // Simulate API call
             await new Promise(resolve => setTimeout(resolve, 1500));
 
+            // Record Login Event
+            const historyItem = {
+                type: 'LOGIN',
+                timestamp: new Date().toISOString(),
+                deviceName: Platform.OS === 'ios' ? 'iPhone' : 'Android' // Simple device info
+            };
+
+            const existingHistory = await AsyncStorage.getItem('loginHistory');
+            const history = existingHistory ? JSON.parse(existingHistory) : [];
+            history.unshift(historyItem); // Add to beginning
+            await AsyncStorage.setItem('loginHistory', JSON.stringify(history));
+
             Alert.alert("Success", "Account created successfully!", [
                 {
                     text: "Get Started",
@@ -317,7 +329,20 @@ export default function Login({ navigation }) {
 
                         <TouchableOpacity
                             style={styles.guestButton}
-                            onPress={() => navigation.replace('MainTabs')}
+                            onPress={async () => {
+                                // Record Guest Login
+                                const historyItem = {
+                                    type: 'LOGIN (Guest)',
+                                    timestamp: new Date().toISOString(),
+                                    deviceName: Platform.OS === 'ios' ? 'iPhone' : 'Android'
+                                };
+                                const existingHistory = await AsyncStorage.getItem('loginHistory');
+                                const history = existingHistory ? JSON.parse(existingHistory) : [];
+                                history.unshift(historyItem);
+                                await AsyncStorage.setItem('loginHistory', JSON.stringify(history));
+
+                                navigation.replace('MainTabs');
+                            }}
                         >
                             <Text style={styles.guestButtonText}>
                                 Continue as Guest
