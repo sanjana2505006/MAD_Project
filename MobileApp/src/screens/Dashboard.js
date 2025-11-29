@@ -114,7 +114,7 @@ export default function Dashboard({ navigation }) {
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <Text style={styles.sectionTitle}>Recent Projects</Text>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('ProjectList')}>
                             <Text style={styles.seeAll}>View All</Text>
                         </TouchableOpacity>
                     </View>
