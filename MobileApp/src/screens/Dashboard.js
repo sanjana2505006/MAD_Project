@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, ActivityIndicator } from 'react-native';
-import { Play, LogOut, Clock } from 'lucide-react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, ActivityIndicator, Dimensions } from 'react-native';
+import { Play, LogOut, Clock, Zap, Award, TrendingUp } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../components/Header';
 import ProjectCard from '../components/ProjectCard';
 import ProblemCard from '../components/ProblemCard';
 import { useFocusEffect } from '@react-navigation/native';
+
+const { width } = Dimensions.get('window');
 
 const Dashboard = ({ navigation }) => {
     const [loginHistory, setLoginHistory] = useState([]);
@@ -138,22 +141,58 @@ const Dashboard = ({ navigation }) => {
                 onProfilePress={() => navigation.navigate('Profile')}
             />
 
-            <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
+            <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
                 {/* Start Coding Button */}
-                <TouchableOpacity style={styles.startBtn} onPress={() => navigation.navigate('Problems')}>
-                    <View style={styles.startBtnIcon}>
-                        <Play fill="#fff" color="#fff" size={24} />
-                    </View>
-                    <View>
-                        <Text style={styles.startBtnText}>Start Coding</Text>
-                        <Text style={styles.startBtnSubtext}>Practice new problems</Text>
-                    </View>
+                <TouchableOpacity onPress={() => navigation.navigate('Problems')} activeOpacity={0.9}>
+                    <LinearGradient
+                        colors={['#4dabf7', '#3b82f6']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.startBtn}
+                    >
+                        <View style={styles.startBtnContent}>
+                            <View style={styles.startBtnIcon}>
+                                <Play fill="#4dabf7" color="#4dabf7" size={24} />
+                            </View>
+                            <View style={styles.startBtnTextContainer}>
+                                <Text style={styles.startBtnText}>Start Coding</Text>
+                                <Text style={styles.startBtnSubtext}>Practice new problems & improve skills</Text>
+                            </View>
+                            <View style={styles.arrowContainer}>
+                                <Zap color="#fff" size={24} fill="#fff" />
+                            </View>
+                        </View>
+                    </LinearGradient>
                 </TouchableOpacity>
+
+                {/* Stats Row */}
+                <View style={styles.statsRow}>
+                    <View style={styles.statCard}>
+                        <Award color="#f59e0b" size={24} />
+                        <Text style={styles.statValue}>12</Text>
+                        <Text style={styles.statLabel}>Solved</Text>
+                    </View>
+                    <View style={styles.statCard}>
+                        <TrendingUp color="#10b981" size={24} />
+                        <Text style={styles.statValue}>5</Text>
+                        <Text style={styles.statLabel}>Streak</Text>
+                    </View>
+                    <View style={styles.statCard}>
+                        <Clock color="#8b5cf6" size={24} />
+                        <Text style={styles.statValue}>2h</Text>
+                        <Text style={styles.statLabel}>Today</Text>
+                    </View>
+                </View>
 
                 {/* Recommended Problems Section */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Recommended for You</Text>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitle}>Recommended for You</Text>
+                        <TouchableOpacity>
+                            <Text style={styles.seeAll}>See All</Text>
+                        </TouchableOpacity>
+                    </View>
                     {loadingProblems && recommendedProblems.length === 0 ? (
                         <ActivityIndicator size="large" color="#4dabf7" style={{ marginVertical: 20 }} />
                     ) : (
@@ -169,7 +208,12 @@ const Dashboard = ({ navigation }) => {
 
                 {/* Recent Projects Section */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Recent Projects</Text>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitle}>Recent Projects</Text>
+                        <TouchableOpacity>
+                            <Text style={styles.seeAll}>View All</Text>
+                        </TouchableOpacity>
+                    </View>
                     {recentProjects.map((project) => (
                         <ProjectCard
                             key={project.id}
@@ -182,29 +226,33 @@ const Dashboard = ({ navigation }) => {
                 {/* Login History Section */}
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
-                        <Clock size={20} color="#94a3b8" style={{ marginRight: 8 }} />
-                        <Text style={styles.sectionTitle}>Login History</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Clock size={20} color="#94a3b8" style={{ marginRight: 8 }} />
+                            <Text style={styles.sectionTitle}>Login History</Text>
+                        </View>
                     </View>
 
-                    {loginHistory.length > 0 ? (
-                        <View style={styles.historyList}>
-                            {loginHistory.slice(0, 5).map((item, index) => (
-                                <View key={index} style={styles.historyItem}>
-                                    <View style={[
-                                        styles.historyIndicator,
-                                        { backgroundColor: item.type.includes('LOGIN') ? '#10b981' : '#ef4444' }
-                                    ]} />
-                                    <View style={styles.historyInfo}>
-                                        <Text style={styles.historyType}>{item.type}</Text>
-                                        <Text style={styles.historyDevice}>{item.deviceName}</Text>
+                    <View style={styles.historyCard}>
+                        {loginHistory.length > 0 ? (
+                            <View style={styles.historyList}>
+                                {loginHistory.slice(0, 5).map((item, index) => (
+                                    <View key={index} style={[styles.historyItem, index === loginHistory.slice(0, 5).length - 1 && { borderBottomWidth: 0 }]}>
+                                        <View style={[
+                                            styles.historyIndicator,
+                                            { backgroundColor: item.type.includes('LOGIN') ? '#10b981' : '#ef4444' }
+                                        ]} />
+                                        <View style={styles.historyInfo}>
+                                            <Text style={styles.historyType}>{item.type}</Text>
+                                            <Text style={styles.historyDevice}>{item.deviceName}</Text>
+                                        </View>
+                                        <Text style={styles.historyTime}>{formatDate(item.timestamp)}</Text>
                                     </View>
-                                    <Text style={styles.historyTime}>{formatDate(item.timestamp)}</Text>
-                                </View>
-                            ))}
-                        </View>
-                    ) : (
-                        <Text style={styles.emptyText}>No history available</Text>
-                    )}
+                                ))}
+                            </View>
+                        ) : (
+                            <Text style={styles.emptyText}>No history available</Text>
+                        )}
+                    </View>
                 </View>
 
             </ScrollView>
@@ -225,65 +273,115 @@ const styles = StyleSheet.create({
         paddingBottom: 40,
     },
     startBtn: {
-        backgroundColor: '#4dabf7',
-        borderRadius: 16,
-        padding: 20,
+        borderRadius: 20,
+        padding: 24,
+        marginBottom: 24,
+        shadowColor: '#4dabf7',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.25,
+        shadowRadius: 16,
+        elevation: 8,
+    },
+    startBtnContent: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 30,
-        shadowColor: '#4dabf7',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 5,
     },
     startBtnIcon: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: 'rgba(255,255,255,0.2)',
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: '#fff',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 16,
     },
+    startBtnTextContainer: {
+        flex: 1,
+    },
     startBtnText: {
-        fontSize: 20,
-        fontWeight: 'bold',
+        fontSize: 22,
+        fontWeight: '800',
         color: '#fff',
+        marginBottom: 4,
     },
     startBtnSubtext: {
         fontSize: 14,
-        color: 'rgba(255,255,255,0.8)',
+        color: 'rgba(255,255,255,0.9)',
+        fontWeight: '500',
+    },
+    arrowContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    statsRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 32,
+    },
+    statCard: {
+        backgroundColor: '#1e1e1e',
+        borderRadius: 16,
+        padding: 16,
+        width: (width - 40 - 24) / 3,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+    },
+    statValue: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginTop: 8,
+        marginBottom: 4,
+    },
+    statLabel: {
+        fontSize: 12,
+        color: '#94a3b8',
     },
     section: {
-        marginBottom: 30,
+        marginBottom: 32,
     },
     sectionHeader: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
         marginBottom: 16,
     },
     sectionTitle: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
         color: '#fff',
     },
-    historyList: {
-        backgroundColor: '#1e293b',
-        borderRadius: 12,
+    seeAll: {
+        color: '#4dabf7',
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    historyCard: {
+        backgroundColor: '#1e1e1e',
+        borderRadius: 16,
         padding: 16,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+    },
+    historyList: {
+        // Removed background color as it's now handled by historyCard
     },
     historyItem: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#334155',
+        borderBottomColor: '#333',
     },
     historyIndicator: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
+        width: 10,
+        height: 10,
+        borderRadius: 5,
         marginRight: 12,
     },
     historyInfo: {
@@ -291,16 +389,18 @@ const styles = StyleSheet.create({
     },
     historyType: {
         color: '#f8fafc',
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: '600',
+        marginBottom: 2,
     },
     historyDevice: {
         color: '#94a3b8',
-        fontSize: 12,
+        fontSize: 13,
     },
     historyTime: {
         color: '#64748b',
-        fontSize: 12,
+        fontSize: 13,
+        fontWeight: '500',
     },
     emptyText: {
         color: '#64748b',

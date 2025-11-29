@@ -4,7 +4,7 @@ import { Code, ChevronRight } from 'lucide-react-native';
 
 const ProjectCard = ({ title, language, progress }) => {
     return (
-        <TouchableOpacity style={styles.card}>
+        <TouchableOpacity style={styles.card} activeOpacity={0.7}>
             <View style={styles.iconContainer}>
                 <Code color="#4dabf7" size={24} />
             </View>
@@ -13,7 +13,7 @@ const ProjectCard = ({ title, language, progress }) => {
                 <Text style={styles.language}>{language}</Text>
             </View>
             <View style={styles.arrowContainer}>
-                <ChevronRight color="#a0a0a0" size={20} />
+                <ChevronRight color="#64748b" size={20} />
             </View>
         </TouchableOpacity>
     );
@@ -23,17 +23,17 @@ const styles = StyleSheet.create({
     card: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#252525',
-        borderRadius: 12,
+        backgroundColor: '#1e1e1e',
+        borderRadius: 16,
         padding: 16,
         marginBottom: 12,
         borderWidth: 1,
-        borderColor: '#333',
+        borderColor: '#2a2a2a',
     },
     iconContainer: {
         width: 48,
         height: 48,
-        borderRadius: 8,
+        borderRadius: 12,
         backgroundColor: 'rgba(77, 171, 247, 0.1)',
         justifyContent: 'center',
         alignItems: 'center',
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     },
     language: {
         fontSize: 14,
-        color: '#a0a0a0',
+        color: '#94a3b8',
     },
     arrowContainer: {
         justifyContent: 'center',

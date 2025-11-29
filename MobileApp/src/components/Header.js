@@ -1,15 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { User, LogOut } from 'lucide-react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { User, LogOut, Bell } from 'lucide-react-native';
 
 const Header = ({ onLogout, onProfilePress }) => {
     return (
         <View style={styles.container}>
             <View>
-                <Text style={styles.greeting}>Hello, Coder!</Text>
-                <Text style={styles.subtext}>Ready to code today?</Text>
+                <Text style={styles.greeting}>Hello, Coder! 👋</Text>
+                <Text style={styles.subtext}>Let's solve some problems today</Text>
             </View>
             <View style={styles.rightContainer}>
+                <TouchableOpacity style={styles.iconButton}>
+                    <Bell color="#fff" size={24} />
+                    <View style={styles.badge} />
+                </TouchableOpacity>
                 <TouchableOpacity onPress={onProfilePress}>
                     <View style={styles.profileContainer}>
                         <User color="#fff" size={24} />
@@ -32,35 +36,56 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
         paddingVertical: 20,
-        backgroundColor: '#1e1e1e',
-        paddingTop: 50, // Add padding for status bar
+        backgroundColor: '#121212', // Match main background
+        paddingTop: 60, // Add padding for status bar
     },
     greeting: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#fff',
+        marginBottom: 4,
     },
     subtext: {
         fontSize: 14,
-        color: '#a0a0a0',
+        color: '#94a3b8',
     },
     rightContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
     },
-    profileContainer: {
+    iconButton: {
         width: 40,
         height: 40,
-        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 4,
+    },
+    badge: {
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: '#ef4444',
+        borderWidth: 1,
+        borderColor: '#121212',
+    },
+    profileContainer: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
         backgroundColor: '#333',
         justifyContent: 'center',
         alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#4dabf7',
     },
     logoutButton: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
         backgroundColor: 'rgba(239, 68, 68, 0.1)',
         justifyContent: 'center',
         alignItems: 'center',

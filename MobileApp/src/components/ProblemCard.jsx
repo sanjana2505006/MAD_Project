@@ -29,9 +29,9 @@ const getStatusTextStyle = (status) => {
 
 function ProblemCard({ title, category, difficulty, status, date, onPress }) {
     return (
-        <TouchableOpacity style={styles.card} onPress={onPress}>
+        <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
             <View style={styles.header}>
-                <Text style={[styles.difficulty, { borderColor: getDifficultyColor(difficulty) }]}>
+                <Text style={[styles.difficulty, { borderColor: getDifficultyColor(difficulty), color: getDifficultyColor(difficulty) }]}>
                     {difficulty}
                 </Text>
                 <Text style={[styles.status, getStatusTextStyle(status)]}>{status}</Text>
@@ -49,48 +49,48 @@ export default React.memo(ProblemCard);
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: 'white',
-        padding: 12,
+        backgroundColor: '#1e1e1e',
+        padding: 16,
         marginBottom: 12,
-        borderRadius: 8,
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 8,
+        marginBottom: 12,
     },
     difficulty: {
         borderWidth: 1,
         borderRadius: 12,
-        paddingHorizontal: 8,
-        paddingVertical: 2,
-        fontWeight: 'bold',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        fontWeight: '600',
         fontSize: 12,
+        textTransform: 'capitalize',
     },
     status: {
-        fontWeight: 'bold',
+        fontWeight: '600',
         fontSize: 12,
         textTransform: 'capitalize',
     },
     title: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 6,
+        color: '#fff',
+        marginBottom: 8,
     },
     meta: {
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
     category: {
-        fontSize: 14,
-        color: '#6b7280',
+        fontSize: 13,
+        color: '#94a3b8',
     },
     date: {
-        fontSize: 14,
-        color: '#6b7280',
+        fontSize: 13,
+        color: '#64748b',
     },
 });
