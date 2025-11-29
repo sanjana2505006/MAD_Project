@@ -1,21 +1,61 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ActivityIndicator } from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+    ActivityIndicator,
+    Alert,
+    ScrollView,
+    Animated,
+    Dimensions,
+    KeyboardAvoidingView,
+    Platform
+} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from "@expo/vector-icons";
+import LottieView from 'lottie-react-native';
+
+const { width, height } = Dimensions.get('window');
 
 export default function Login({ navigation }) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
-    const [alertVisible, setAlertVisible] = useState(false);
-    const [alertMessage, setAlertMessage] = useState("");
-    const [alertType, setAlertType] = useState("");
     const [loading, setLoading] = useState(false);
     const [savedUser, setSavedUser] = useState(null);
+    const [focusedInput, setFocusedInput] = useState(null);
+
+    // Animation values
+    const fadeAnim = useState(new Animated.Value(0))[0];
+    const slideAnim = useState(new Animated.Value(50))[0];
+    const scaleAnim = useState(new Animated.Value(0.8))[0];
 
     useEffect(() => {
         loadUserData();
+        startAnimations();
     }, []);
+
+    const startAnimations = () => {
+        Animated.parallel([
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 800,
+                useNativeDriver: true,
+            }),
+            Animated.timing(slideAnim, {
+                toValue: 0,
+                duration: 800,
+                useNativeDriver: true,
+            }),
+            Animated.timing(scaleAnim, {
+                toValue: 1,
+                duration: 800,
+                useNativeDriver: true,
+            })
+        ]).start();
+    };
 
     const loadUserData = async () => {
         try {
@@ -63,386 +103,489 @@ export default function Login({ navigation }) {
         return phoneRegex.test(phone.replace(/\D/g, ''));
     };
 
-    const showAlert = (message, type = "error") => {
-        setAlertMessage(message);
-        setAlertType(type);
-        setAlertVisible(true);
-    };
-
     const handleLogin = async () => {
-        // Email validation
+        // Validation
         if (!validateEmail(email)) {
-            showAlert("Please enter a valid email address", "error");
+            Alert.alert("Invalid Email", "Please enter a valid email address");
             return;
         }
 
-        // Phone validation
         if (!validatePhone(phone)) {
-            showAlert("Please enter a valid 10-digit phone number", "error");
+            Alert.alert("Invalid Phone", "Please enter a valid 10-digit phone number");
             return;
         }
 
-        // Name validation
         if (name.trim().length < 2) {
-            showAlert("Please enter a valid name (at least 2 characters)", "error");
+            Alert.alert("Invalid Name", "Please enter a valid name (at least 2 characters)");
             return;
         }
 
         setLoading(true);
 
-        // Save user data to AsyncStorage
-        await saveUserData();
+        try {
+            await saveUserData();
+
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            Alert.alert("Success", "Account created successfully!", [
+                {
+                    text: "Get Started",
+                    onPress: () => navigation.replace('MainTabs')
+                }
+            ]);
+        } catch (e) {
+            console.error("Save failed", e);
+            Alert.alert("Error", "Something went wrong. Please try again.");
+        }
 
         setLoading(false);
-
-        console.log('Login successful with:', { name, email, phone });
-        showAlert("Account created successfully!", "success");
-
-        // Navigate to Dashboard after successful account creation
-        setTimeout(() => {
-            setAlertVisible(false);
-            navigation.replace('Dashboard');
-        }, 1500);
     };
 
+    const InputField = ({ icon, placeholder, value, onChangeText, keyboardType = "default", maxLength, type }) => (
+        <TouchableOpacity
+            style={[
+                styles.inputWrapper,
+                focusedInput === type && styles.inputWrapperFocused
+            ]}
+            activeOpacity={1}
+        >
+            <View style={styles.inputIconContainer}>
+                <Ionicons
+                    name={icon}
+                    size={22}
+                    color={focusedInput === type ? "#6366f1" : "#94a3b8"}
+                />
+            </View>
+            <TextInput
+                style={styles.input}
+                placeholder={placeholder}
+                placeholderTextColor="#94a3b8"
+                value={value}
+                onChangeText={onChangeText}
+                keyboardType={keyboardType}
+                maxLength={maxLength}
+                onFocus={() => setFocusedInput(type)}
+                onBlur={() => setFocusedInput(null)}
+                autoCapitalize={type === 'email' ? 'none' : 'words'}
+            />
+            {value.length > 0 && (
+                <TouchableOpacity
+                    style={styles.clearButton}
+                    onPress={() => {
+                        if (type === 'name') setName("");
+                        if (type === 'email') setEmail("");
+                        if (type === 'phone') setPhone("");
+                    }}
+                >
+                    <Ionicons name="close-circle" size={18} color="#94a3b8" />
+                </TouchableOpacity>
+            )}
+        </TouchableOpacity>
+    );
+
     return (
-        <View style={styles.container}>
-            {/* Decorative Background Elements */}
-            <View style={styles.backgroundCircle1} />
-            <View style={styles.backgroundCircle2} />
-
-            {/* Header */}
-            <View style={styles.header}>
-                <View style={styles.iconContainer}>
-                    <Ionicons name="cart" size={50} color="#4CAF50" />
-                </View>
-                <Text style={styles.title}>Create Account</Text>
-                <Text style={styles.subtitle}>Join us and get hands on coding practise</Text>
-
-                {savedUser && (
-                    <TouchableOpacity style={styles.quickFillButton} onPress={fillSavedData}>
-                        <Ionicons name="flash" size={16} color="#4CAF50" style={{ marginRight: 6 }} />
-                        <Text style={styles.quickFillText}>Continue as {savedUser.name}</Text>
-                    </TouchableOpacity>
-                )}
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+            {/* Animated Background */}
+            <View style={styles.background}>
+                <View style={[styles.backgroundShape, styles.shape1]} />
+                <View style={[styles.backgroundShape, styles.shape2]} />
+                <View style={[styles.backgroundShape, styles.shape3]} />
+                <View style={[styles.backgroundShape, styles.shape4]} />
             </View>
 
-            {/* Input Fields */}
-            <View style={styles.formContainer}>
-                <View style={styles.inputWrapper}>
-                    <Ionicons name="person-outline" size={20} color="#4CAF50" style={styles.inputIcon} />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter your name"
-                        placeholderTextColor="#999"
-                        value={name}
-                        onChangeText={setName}
-                    />
-                </View>
-
-                <View style={styles.inputWrapper}>
-                    <Ionicons name="mail-outline" size={20} color="#4CAF50" style={styles.inputIcon} />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter your email"
-                        placeholderTextColor="#999"
-                        value={email}
-                        onChangeText={setEmail}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                    />
-                </View>
-
-                <View style={styles.inputWrapper}>
-                    <Ionicons name="call-outline" size={20} color="#4CAF50" style={styles.inputIcon} />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter your phone (10 digits)"
-                        placeholderTextColor="#999"
-                        value={phone}
-                        onChangeText={setPhone}
-                        keyboardType="phone-pad"
-                        maxLength={10}
-                    />
-                </View>
-            </View>
-
-            <TouchableOpacity
-                style={[styles.loginButton, loading && styles.loginButtonDisabled]}
-                onPress={handleLogin}
-                disabled={loading}
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
             >
-                {loading ? (
-                    <ActivityIndicator color="#fff" />
-                ) : (
-                    <Text style={styles.loginButtonText}>Create Account</Text>
-                )}
-            </TouchableOpacity>
-
-            <View style={styles.footer}>
-                <Text style={styles.footerText}>
-                    By creating an account, you agree to our{' '}
-                    <Text style={styles.link}>Terms of Service</Text> and{' '}
-                    <Text style={styles.link}>Privacy Policy</Text>
-                </Text>
-            </View>
-
-            {/* Custom Alert Modal */}
-            <Modal
-                visible={alertVisible}
-                transparent={true}
-                animationType="fade"
-                onRequestClose={() => setAlertVisible(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={[
-                        styles.alertBox,
-                        alertType === "error" ? styles.errorAlert : styles.successAlert
-                    ]}>
-                        <View style={[
-                            styles.alertIconContainer,
-                            alertType === "error" ? styles.errorIconBg : styles.successIconBg
-                        ]}>
-                            <Ionicons
-                                name={alertType === "error" ? "close-circle" : "checkmark-circle"}
-                                size={50}
-                                color="#fff"
+                <Animated.View
+                    style={[
+                        styles.content,
+                        {
+                            opacity: fadeAnim,
+                            transform: [
+                                { translateY: slideAnim },
+                                { scale: scaleAnim }
+                            ]
+                        }
+                    ]}
+                >
+                    {/* Header Section */}
+                    <View style={styles.header}>
+                        <View style={styles.animationContainer}>
+                            <LottieView
+                                source={require('../../assets/animations/coding.json')} // Add your animation file
+                                autoPlay
+                                loop
+                                style={styles.lottieAnimation}
                             />
                         </View>
-                        <Text style={styles.alertTitle}>
-                            {alertType === "error" ? "Oops!" : "Success!"}
+
+                        <Text style={styles.title}>Start Your Coding Journey</Text>
+                        <Text style={styles.subtitle}>
+                            Join thousands of developers improving their skills daily
                         </Text>
-                        <Text style={styles.alertMessage}>{alertMessage}</Text>
+
+                        {savedUser && (
+                            <TouchableOpacity
+                                style={styles.quickFillButton}
+                                onPress={fillSavedData}
+                            >
+                                <View style={styles.quickFillContent}>
+                                    <Ionicons name="refresh" size={18} color="#6366f1" />
+                                    <Text style={styles.quickFillText}>
+                                        Continue as {savedUser.name}
+                                    </Text>
+                                </View>
+                                <Ionicons name="chevron-forward" size={16} color="#6366f1" />
+                            </TouchableOpacity>
+                        )}
+                    </View>
+
+                    {/* Form Section */}
+                    <View style={styles.formContainer}>
+                        <Text style={styles.formTitle}>Create Account</Text>
+
+                        <InputField
+                            icon="person-outline"
+                            placeholder="Full Name"
+                            value={name}
+                            onChangeText={setName}
+                            type="name"
+                        />
+
+                        <InputField
+                            icon="mail-outline"
+                            placeholder="Email Address"
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                            type="email"
+                        />
+
+                        <InputField
+                            icon="call-outline"
+                            placeholder="Phone Number"
+                            value={phone}
+                            onChangeText={setPhone}
+                            keyboardType="phone-pad"
+                            maxLength={10}
+                            type="phone"
+                        />
+
+                        <View style={styles.validationInfo}>
+                            <Text style={styles.validationText}>
+                                ✓ 10-digit phone number required
+                            </Text>
+                            <Text style={styles.validationText}>
+                                ✓ Valid email format required
+                            </Text>
+                        </View>
+                    </View>
+
+                    {/* Action Section */}
+                    <View style={styles.actionContainer}>
                         <TouchableOpacity
                             style={[
-                                styles.alertButton,
-                                alertType === "error" ? styles.errorButton : styles.successButton
+                                styles.loginButton,
+                                loading && styles.loginButtonDisabled,
+                                (!name || !email || !phone) && styles.loginButtonIncomplete
                             ]}
-                            onPress={() => setAlertVisible(false)}
+                            onPress={handleLogin}
+                            disabled={loading || !name || !email || !phone}
                         >
-                            <Text style={styles.alertButtonText}>OK</Text>
+                            {loading ? (
+                                <ActivityIndicator color="#fff" size="small" />
+                            ) : (
+                                <View style={styles.buttonContent}>
+                                    <Text style={styles.loginButtonText}>
+                                        Create Account
+                                    </Text>
+                                    <Ionicons name="arrow-forward" size={20} color="#fff" />
+                                </View>
+                            )}
+                        </TouchableOpacity>
+
+                        <View style={styles.divider}>
+                            <View style={styles.dividerLine} />
+                            <Text style={styles.dividerText}>or</Text>
+                            <View style={styles.dividerLine} />
+                        </View>
+
+                        <TouchableOpacity
+                            style={styles.guestButton}
+                            onPress={() => navigation.replace('MainTabs')}
+                        >
+                            <Text style={styles.guestButtonText}>
+                                Continue as Guest
+                            </Text>
                         </TouchableOpacity>
                     </View>
-                </View>
-            </Modal>
-        </View>
+
+                    {/* Footer */}
+                    <View style={styles.footer}>
+                        <Text style={styles.footerText}>
+                            By creating an account, you agree to our{' '}
+                            <Text style={styles.link}>Terms</Text> and{' '}
+                            <Text style={styles.link}>Privacy Policy</Text>
+                        </Text>
+
+                        <View style={styles.loginPrompt}>
+                            <Text style={styles.loginPromptText}>
+                                Already have an account?{' '}
+                            </Text>
+                            <TouchableOpacity>
+                                <Text style={styles.loginLink}>Sign In</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Animated.View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-        justifyContent: "center",
-        backgroundColor: "#f8f9fa",
+        backgroundColor: "#0f172a",
     },
-    backgroundCircle1: {
+    background: {
         position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+    backgroundShape: {
+        position: 'absolute',
+        borderRadius: 50,
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+    },
+    shape1: {
         width: 300,
         height: 300,
-        borderRadius: 150,
-        backgroundColor: 'rgba(76, 175, 80, 0.1)',
-        top: -100,
+        top: -150,
         right: -100,
     },
-    backgroundCircle2: {
-        position: 'absolute',
+    shape2: {
         width: 200,
         height: 200,
-        borderRadius: 100,
-        backgroundColor: 'rgba(76, 175, 80, 0.08)',
         bottom: -50,
         left: -50,
+        backgroundColor: 'rgba(99, 102, 241, 0.08)',
+    },
+    shape3: {
+        width: 150,
+        height: 150,
+        top: '30%',
+        left: -50,
+        backgroundColor: 'rgba(99, 102, 241, 0.05)',
+    },
+    shape4: {
+        width: 100,
+        height: 100,
+        bottom: '20%',
+        right: -30,
+        backgroundColor: 'rgba(99, 102, 241, 0.06)',
+    },
+    scrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
+    },
+    content: {
+        padding: 24,
     },
     header: {
-        marginBottom: 40,
-        alignItems: "center",
-    },
-    iconContainer: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        backgroundColor: '#fff',
-        justifyContent: 'center',
         alignItems: 'center',
+        marginBottom: 40,
+    },
+    animationContainer: {
+        width: 120,
+        height: 120,
         marginBottom: 20,
-        shadowColor: "#4CAF50",
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 8,
+    },
+    lottieAnimation: {
+        width: '100%',
+        height: '100%',
     },
     title: {
         fontSize: 32,
-        fontWeight: "700",
-        color: "#1a1a1a",
-        marginBottom: 8,
-        textAlign: "center",
+        fontWeight: '800',
+        color: '#f8fafc',
+        textAlign: 'center',
+        marginBottom: 12,
+        letterSpacing: -0.5,
     },
     subtitle: {
         fontSize: 16,
-        color: "#666",
-        textAlign: "center",
-        lineHeight: 22,
+        color: '#94a3b8',
+        textAlign: 'center',
+        lineHeight: 24,
+        paddingHorizontal: 20,
     },
     quickFillButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#E8F5E9',
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 20,
-        marginTop: 15,
+        justifyContent: 'space-between',
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 16,
+        marginTop: 20,
         borderWidth: 1,
-        borderColor: '#C8E6C9',
+        borderColor: 'rgba(99, 102, 241, 0.2)',
+        width: '100%',
+        maxWidth: 280,
+    },
+    quickFillContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     quickFillText: {
-        color: '#4CAF50',
+        color: '#6366f1',
         fontWeight: '600',
-        fontSize: 14,
+        fontSize: 15,
+        marginLeft: 8,
     },
     formContainer: {
         marginBottom: 30,
     },
+    formTitle: {
+        fontSize: 24,
+        fontWeight: '700',
+        color: '#f8fafc',
+        marginBottom: 24,
+        textAlign: 'center',
+    },
     inputWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 12,
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        borderRadius: 16,
         marginBottom: 16,
-        paddingHorizontal: 15,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        paddingHorizontal: 16,
+        borderWidth: 2,
+        borderColor: 'transparent',
+        height: 60,
     },
-    inputIcon: {
-        marginRight: 10,
+    inputWrapperFocused: {
+        borderColor: '#6366f1',
+        backgroundColor: 'rgba(99, 102, 241, 0.05)',
+    },
+    inputIconContainer: {
+        width: 24,
+        alignItems: 'center',
+        marginRight: 12,
     },
     input: {
         flex: 1,
-        padding: 15,
         fontSize: 16,
-        color: '#1a1a1a',
+        color: '#f8fafc',
+        fontWeight: '500',
+    },
+    clearButton: {
+        padding: 4,
+    },
+    validationInfo: {
+        marginTop: 8,
+        paddingHorizontal: 8,
+    },
+    validationText: {
+        fontSize: 12,
+        color: '#64748b',
+        marginBottom: 4,
+    },
+    actionContainer: {
+        marginBottom: 30,
     },
     loginButton: {
-        backgroundColor: "#4CAF50",
-        padding: 18,
-        borderRadius: 12,
+        backgroundColor: "#6366f1",
+        padding: 20,
+        borderRadius: 16,
         alignItems: "center",
         marginBottom: 20,
-        shadowColor: "#4CAF50",
+        shadowColor: "#6366f1",
         shadowOffset: {
             width: 0,
-            height: 4,
+            height: 8,
         },
         shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 5,
+        shadowRadius: 16,
+        elevation: 8,
     },
     loginButtonDisabled: {
         opacity: 0.7,
+    },
+    loginButtonIncomplete: {
+        opacity: 0.5,
+    },
+    buttonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     loginButtonText: {
         color: "white",
         fontSize: 18,
         fontWeight: "700",
+        marginRight: 8,
+    },
+    divider: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 20,
+    },
+    dividerLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: '#334155',
+    },
+    dividerText: {
+        color: '#64748b',
+        paddingHorizontal: 16,
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    guestButton: {
+        padding: 16,
+        borderRadius: 12,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#334155',
+    },
+    guestButtonText: {
+        color: '#94a3b8',
+        fontSize: 16,
+        fontWeight: '600',
     },
     footer: {
         alignItems: "center",
-        paddingHorizontal: 20,
     },
     footerText: {
         fontSize: 13,
-        color: "#666",
+        color: "#64748b",
         textAlign: "center",
         lineHeight: 20,
+        marginBottom: 16,
     },
     link: {
-        color: "#4CAF50",
+        color: "#6366f1",
         fontWeight: "600",
     },
-    // Custom Alert Styles
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
+    loginPrompt: {
+        flexDirection: 'row',
         alignItems: 'center',
-        padding: 20,
     },
-    alertBox: {
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 30,
-        width: '85%',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 8,
+    loginPromptText: {
+        color: '#64748b',
+        fontSize: 14,
     },
-    errorAlert: {
-        borderTopWidth: 4,
-        borderTopColor: '#ff4444',
-    },
-    successAlert: {
-        borderTopWidth: 4,
-        borderTopColor: '#4CAF50',
-    },
-    alertIconContainer: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    errorIconBg: {
-        backgroundColor: '#ff4444',
-    },
-    successIconBg: {
-        backgroundColor: '#4CAF50',
-    },
-    alertTitle: {
-        fontSize: 24,
-        fontWeight: '700',
-        marginBottom: 10,
-        color: '#1a1a1a',
-    },
-    alertMessage: {
-        fontSize: 16,
-        textAlign: 'center',
-        marginBottom: 25,
-        lineHeight: 24,
-        color: '#666',
-    },
-    alertButton: {
-        paddingVertical: 12,
-        paddingHorizontal: 40,
-        borderRadius: 12,
-        minWidth: 120,
-    },
-    errorButton: {
-        backgroundColor: '#ff4444',
-    },
-    successButton: {
-        backgroundColor: '#4CAF50',
-    },
-    alertButtonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: '700',
-        textAlign: 'center',
+    loginLink: {
+        color: '#6366f1',
+        fontWeight: '600',
+        fontSize: 14,
     },
 });
