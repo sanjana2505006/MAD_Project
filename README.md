@@ -6,29 +6,33 @@
 
 ## Overview
 
-**MAD Project** is a modern mobile coding platform built with **React Native** that provides a focused, distraction-free environment for solving programming problems. Unlike traditional platforms, this app tracks user progress, engagement, and problem-solving metrics in real-time, providing insights and motivation to learners while keeping all resources within a single interface.
-
-This project aims to improve productivity and reduce common distractions when learning to code online.
+**MAD Project** is a modern mobile coding platform built with **React Native** and **Expo** that provides a focused environment for developers to practice coding problems. The app integrates with LeetCode to fetch recommended problems, tracks user progress with real-time statistics, and offers a seamless mobile experience with a premium dark-mode UI.
 
 ---
 
 ## Features
 
-- **All-in-One Learning Environment:** Solve coding problems without leaving the app.  
-- **Distraction-Free Interface:** Focus mode to prevent switching to external tools.  
-- **Real-Time Analytics:** Track problems opened, solved, and average solving time.  
-- **Hints and Guidance:** Contextual hints appear if a user gets stuck.  
-- **Motivation & Gamification:** Points, badges, and streaks for consistent learning.  
-- **Cross-Platform:** Works on iOS and Android using React Native.  
+- **Interactive Dashboard**: View real-time stats including solved problems, current streak, and time spent.
+- **Recommended Problems**: Get personalized problem recommendations fetched directly from LeetCode.
+- **Problem Explorer**: Browse and search a list of coding problems with difficulty filters (Easy, Medium, Hard).
+- **Profile Management**: customizable user profile with ability to edit name, email, and phone number.
+- **Login History**: Track login sessions and device usage for security.
+- **Dark Mode UI**: A sleek, distraction-free dark theme designed for long coding sessions.
+- **Secure Storage**: User data and session history are securely stored locally using AsyncStorage.
 
 ---
 
 ## Tech Stack
 
-- **Frontend:** React Native, Tailwind CSS / Styled Components  
-- **Backend:** Node.js / Express, MongoDB / PostgreSQL  
-- **Realtime Analytics:** Firebase / WebSockets  
-- **AI Assistance:** OpenAI GPT API (optional, for hints and explanations)  
+- **Framework**: React Native (Expo)
+- **Navigation**: React Navigation (Stack & Bottom Tabs)
+- **State Management**: React Hooks (useState, useEffect)
+- **Data Fetching**: Axios (GraphQL integration with LeetCode)
+- **Local Storage**: @react-native-async-storage/async-storage
+- **UI Components**: 
+  - `expo-linear-gradient` for premium visuals
+  - `lucide-react-native` & `expo-vector-icons` for iconography
+  - Custom reusable components (Cards, Headers, Inputs)
 
 ---
 
@@ -36,10 +40,9 @@ This project aims to improve productivity and reduce common distractions when le
 
 ### Prerequisites
 
-- Node.js >= 18  
-- npm / yarn  
-- React Native CLI  
-- Android Studio / Xcode (for mobile emulators)  
+- Node.js >= 18
+- npm / yarn
+- Expo Go app on your mobile device (iOS/Android) OR Android Studio / Xcode for emulators.
 
 ### Installation
 
@@ -47,52 +50,45 @@ This project aims to improve productivity and reduce common distractions when le
 
 ```bash
 git clone https://github.com/sanjana2505006/MAD_Project.git
-cd MAD_Project
-
+cd MAD_Project/MobileApp
 ```
+
 2. Install dependencies:
-   
- ```bash
+
+```bash
 npm install
-# or
-yarn install
 ```
 
 3. Run the app:
-``` bash
-npx react-native run-android
-# or
-npx react-native run-ios
+
+```bash
+npx expo start
 ```
 
-Documentation & Resources
-•	React Native Documentation: https://reactnative.dev/docs/getting-started￼
-	
-•	React Navigation: https://reactnavigation.org/docs/getting-started￼
-	
-•	Firebase Realtime Database: https://firebase.google.com/docs/database￼
-	
-•	OpenAI GPT API: https://platform.openai.com/docs￼
-	
-•	Tailwind CSS for React Native: https://tailwindcss.com/docs/guides/react-native￼
+4. Scan the QR code with the **Expo Go** app on your phone, or press `a` for Android Emulator / `i` for iOS Simulator.
 
-Contributing
+---
+
+## Contributing
 
 We welcome contributions from the community!
-	1.	Fork the repository
-	2.	Create a feature branch (git checkout -b feature/YourFeature)
-	3.	Commit your changes (git commit -m "Add YourFeature")
-	4.	Push to the branch (git push origin feature/YourFeature)
-	5.	Open a Pull Request
 
-For more details, see the CONTRIBUTING.md￼ guide.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/YourFeature`)
+3. Commit your changes (`git commit -m "Add YourFeature"`)
+4. Push to the branch (`git push origin feature/YourFeature`)
+5. Open a Pull Request
 
-License
+---
 
-This project is licensed under the MIT License. See the LICENSE￼ file for details.
+## License
 
+This project is licensed under the MIT License.
 
-Contact
-	•	GitHub: https://github.com/sanjana2505006￼
+---
+
+## Contact
+
+- **GitHub**: [sanjana2505006](https://github.com/sanjana2505006)
 
 ![Thank you](https://media.giphy.com/media/du3J3cXyzhj75IOgvA/giphy.gif)
