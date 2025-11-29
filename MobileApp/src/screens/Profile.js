@@ -13,9 +13,12 @@ export default function Profile({ navigation }) {
     const [slideAnim] = useState(new Animated.Value(50));
 
     useEffect(() => {
-        loadUserData();
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadUserData();
+        });
         startAnimations();
-    }, []);
+        return unsubscribe;
+    }, [navigation]);
 
     const startAnimations = () => {
         Animated.parallel([
@@ -93,7 +96,10 @@ export default function Profile({ navigation }) {
                     <ChevronLeft color="#fff" size={24} />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Profile</Text>
-                <TouchableOpacity style={styles.editButton}>
+                <TouchableOpacity
+                    style={styles.editButton}
+                    onPress={() => navigation.navigate('EditProfile', { userData })}
+                >
                     <Edit2 color="#fff" size={20} />
                 </TouchableOpacity>
             </View>

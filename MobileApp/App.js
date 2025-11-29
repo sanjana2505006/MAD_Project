@@ -8,6 +8,7 @@ import ProblemList from './src/screens/ProblemList';
 import ProblemDetail from './src/screens/ProblemDetail';
 import ProjectDetail from './src/screens/ProjectDetail';
 import Notifications from './src/screens/Notifications';
+import EditProfile from './src/screens/EditProfile';
 
 import TabNavigator from './src/navigation/TabNavigator';
 import Profile from './src/screens/Profile';
@@ -31,6 +32,7 @@ export default function App() {
         <Stack.Screen name="ProjectDetail" component={ProjectDetail} />
         <Stack.Screen name="Notifications" component={Notifications} />
         <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
       </Stack.Navigator>
     </NavigationContainer>
   );
