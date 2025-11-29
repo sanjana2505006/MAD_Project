@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import Dashboard from '../screens/Dashboard';
 import ProblemList from '../screens/ProblemList';
+import Profile from '../screens/Profile';
 
 const Tab = createBottomTabNavigator();
 
@@ -10,7 +11,7 @@ export default function TabNavigator() {
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
-                headerShown: true,
+                headerShown: false,
                 tabBarStyle: {
                     backgroundColor: '#1e293b',
                     borderTopColor: '#334155',
@@ -31,6 +32,8 @@ export default function TabNavigator() {
                         iconName = focused ? 'grid' : 'grid-outline';
                     } else if (route.name === 'Problems') {
                         iconName = focused ? 'list' : 'list-outline';
+                    } else if (route.name === 'Profile') {
+                        iconName = focused ? 'person' : 'person-outline';
                     }
 
                     return <Ionicons name={iconName} size={size} color={color} />;
@@ -46,6 +49,11 @@ export default function TabNavigator() {
                 name="Problems"
                 component={ProblemList}
                 options={{ title: 'Problems' }}
+            />
+            <Tab.Screen
+                name="Profile"
+                component={Profile}
+                options={{ title: 'Profile' }}
             />
         </Tab.Navigator>
     );

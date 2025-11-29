@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { Search, Filter, ChevronLeft } from 'lucide-react-native';
 import axios from 'axios';
-import { Filter, Search, ChevronLeft } from 'lucide-react-native';
 import ProblemCard from '../components/ProblemCard';
 
 export default function ProblemList({ navigation }) {
-    const [difficultyFilter, setDifficultyFilter] = useState('all');
-    const [statusFilter, setStatusFilter] = useState('all');
-    const [selectedCategory, setSelectedCategory] = useState(null);
     const [problems, setProblems] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedDifficulty, setSelectedDifficulty] = useState('All');
 
     useEffect(() => {
         fetchProblems();
@@ -32,98 +29,84 @@ export default function ProblemList({ navigation }) {
         }
       `;
             const response = await axios.post('https://leetcode.com/graphql', { query });
-            const questions = response.data.data.allQuestions.slice(0, 100); // Limit to first 100 for demo
+            const questions = response.data.data.allQuestions.slice(0, 20);
             const formattedProblems = questions.map((q, index) => ({
                 id: index.toString(),
                 title: q.title,
                 category: q.topicTags.length > 0 ? q.topicTags[0].name : 'General',
                 difficulty: q.difficulty,
-                status: 'Unsolved', // Default status since API doesn't provide user status
-                date: 'not started'
+                status: 'Unsolved', // Default status
+                date: 'Just now'
             }));
             setProblems(formattedProblems);
+            setLoading(false);
         } catch (err) {
-            setError('Failed to fetch problems from LeetCode');
             console.error(err);
-        } finally {
             setLoading(false);
         }
     };
 
     const filteredProblems = problems.filter(problem => {
-        if (selectedCategory && problem.category.toLowerCase() !== selectedCategory) return false;
-        if (difficultyFilter !== 'all' && problem.difficulty.toLowerCase() !== difficultyFilter) return false;
-        if (statusFilter !== 'all' && problem.status.toLowerCase() !== statusFilter) return false;
-        return true;
+        const matchesSearch = problem.title.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesDifficulty = selectedDifficulty === 'All' || problem.difficulty === selectedDifficulty;
+        return matchesSearch && matchesDifficulty;
     });
 
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
-                <View style={styles.headerTop}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Dashboard')} style={styles.backButton}>
-                        <ChevronLeft color="#fff" size={24} />
-                    </TouchableOpacity>
-                    <Text style={styles.header}>Problems</Text>
-                </View>
-                <Text style={styles.subHeader}>Practice coding problems by category and difficulty</Text>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <ChevronLeft color="#fff" size={24} />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Problems</Text>
+                <View style={{ width: 24 }} />
             </View>
 
-            <View style={styles.filtersContainer}>
-                <View style={styles.pickerWrapper}>
-                    <Picker
-                        selectedValue={difficultyFilter}
-                        style={styles.picker}
-                        dropdownIconColor="#fff"
-                        onValueChange={(itemValue) => setDifficultyFilter(itemValue)}
-                    >
-                        <Picker.Item label="All Levels" value="all" color="#fff" />
-                        <Picker.Item label="Easy" value="easy" color="#fff" />
-                        <Picker.Item label="Medium" value="medium" color="#fff" />
-                        <Picker.Item label="Hard" value="hard" color="#fff" />
-                    </Picker>
-                </View>
+            <View style={styles.searchContainer}>
+                <Search color="#94a3b8" size={20} style={styles.searchIcon} />
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder="Search problems..."
+                    placeholderTextColor="#64748b"
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                />
+            </View>
 
-                <View style={styles.pickerWrapper}>
-                    <Picker
-                        selectedValue={statusFilter}
-                        style={styles.picker}
-                        dropdownIconColor="#fff"
-                        onValueChange={(itemValue) => setStatusFilter(itemValue)}
+            <View style={styles.filterContainer}>
+                {['All', 'Easy', 'Medium', 'Hard'].map((difficulty) => (
+                    <TouchableOpacity
+                        key={difficulty}
+                        style={[
+                            styles.filterChip,
+                            selectedDifficulty === difficulty && styles.activeFilterChip
+                        ]}
+                        onPress={() => setSelectedDifficulty(difficulty)}
                     >
-                        <Picker.Item label="All Status" value="all" color="#fff" />
-                        <Picker.Item label="Solved" value="solved" color="#fff" />
-                        <Picker.Item label="Attempting" value="attempting" color="#fff" />
-                        <Picker.Item label="Unsolved" value="unsolved" color="#fff" />
-                    </Picker>
-                </View>
+                        <Text style={[
+                            styles.filterText,
+                            selectedDifficulty === difficulty && styles.activeFilterText
+                        ]}>
+                            {difficulty}
+                        </Text>
+                    </TouchableOpacity>
+                ))}
             </View>
 
             {loading ? (
-                <View style={styles.center}>
-                    <ActivityIndicator size="large" color="#4dabf7" />
-                </View>
+                <ActivityIndicator size="large" color="#6366f1" style={{ marginTop: 40 }} />
             ) : (
                 <FlatList
                     data={filteredProblems}
-                    keyExtractor={item => item.id}
+                    keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
                         <ProblemCard
                             {...item}
                             onPress={() => navigation.navigate('ProblemDetail', { problem: item })}
                         />
                     )}
-                    initialNumToRender={10}
-                    maxToRenderPerBatch={10}
-                    windowSize={5}
-                    removeClippedSubviews={true}
                     contentContainerStyle={styles.listContent}
-                    ListEmptyComponent={
-                        <View style={styles.emptyContainer}>
-                            <Filter color="#64748b" size={48} />
-                            <Text style={styles.noResults}>No problems found matching your filters.</Text>
-                        </View>
-                    }
+                    showsVerticalScrollIndicator={false}
                 />
             )}
         </View>
@@ -133,77 +116,73 @@ export default function ProblemList({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#121212',
+        backgroundColor: '#0f172a',
+        paddingTop: 20,
     },
     headerContainer: {
-        padding: 20,
-        paddingTop: 60,
-        backgroundColor: '#1e293b',
-        borderBottomWidth: 1,
-        borderBottomColor: '#334155',
-    },
-    headerTop: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 8,
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        marginBottom: 20,
     },
     backButton: {
-        marginRight: 12,
-        padding: 4,
-        borderRadius: 8,
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        padding: 8,
+        marginLeft: -8,
     },
-    header: {
-        fontSize: 28,
+    headerTitle: {
+        fontSize: 24,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#f8fafc',
     },
-    subHeader: {
-        fontSize: 14,
-        color: '#94a3b8',
-    },
-    filtersContainer: {
+    searchContainer: {
         flexDirection: 'row',
-        padding: 16,
-        gap: 12,
-    },
-    pickerWrapper: {
-        flex: 1,
-        backgroundColor: '#1e1e1e',
+        alignItems: 'center',
+        backgroundColor: '#1e293b',
+        marginHorizontal: 20,
         borderRadius: 12,
+        paddingHorizontal: 12,
+        marginBottom: 16,
         borderWidth: 1,
-        borderColor: '#333',
-        overflow: 'hidden',
-        height: 50,
-        justifyContent: 'center',
+        borderColor: '#334155',
     },
-    picker: {
+    searchIcon: {
+        marginRight: 8,
+    },
+    searchInput: {
+        flex: 1,
+        paddingVertical: 12,
         color: '#fff',
-        marginLeft: -8, // Adjust for default picker padding
+        fontSize: 16,
+    },
+    filterContainer: {
+        flexDirection: 'row',
+        paddingHorizontal: 20,
+        marginBottom: 20,
+        gap: 8,
+    },
+    filterChip: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 20,
+        backgroundColor: '#1e293b',
+        borderWidth: 1,
+        borderColor: '#334155',
+    },
+    activeFilterChip: {
+        backgroundColor: '#6366f1',
+        borderColor: '#6366f1',
+    },
+    filterText: {
+        color: '#94a3b8',
+        fontWeight: '500',
+    },
+    activeFilterText: {
+        color: '#fff',
+        fontWeight: '600',
     },
     listContent: {
-        padding: 16,
-        paddingTop: 0,
+        paddingHorizontal: 20,
+        paddingBottom: 20,
     },
-    center: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    emptyContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingTop: 60,
-    },
-    noResults: {
-        textAlign: 'center',
-        marginTop: 16,
-        fontSize: 16,
-        color: '#64748b',
-    },
-    error: {
-        color: '#ef4444',
-        fontSize: 16,
-        textAlign: 'center',
-    }
 });
