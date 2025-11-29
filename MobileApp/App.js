@@ -1,25 +1,33 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, View } from 'react-native';
+import { StyleSheet, SafeAreaView } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Dashboard from './src/screens/Dashboard';
+import Login from './src/screens/Login';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
+    <NavigationContainer>
       <StatusBar style="light" />
-      <View style={styles.content}>
-        <Dashboard />
-      </View>
-    </SafeAreaView>
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: '#121212' }
+        }}
+      >
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Dashboard" component={Dashboard} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212', // Match dashboard background
-  },
-  content: {
-    flex: 1,
-    marginTop: 0, // SafeAreaView handles top padding
+    backgroundColor: '#121212',
   },
 });
